@@ -1,0 +1,132 @@
+title: "la_senter"
+description: >
+  Code required to train spaCy-compatible sentence segmenter for Latin.
+
+# Variables can be referenced across the project.yml using ${vars.var_name}
+vars:
+  config: "config"
+  lang: "la"
+  package_name: "senter"
+  package_version: "0.1.0"
+  gpu: -1
+  treebank_pers: "UD_Latin-Perseus"
+  treebank_proi: "UD_Latin-PROIEL"
+  treebank_ittb: "UD_Latin-ITTB"
+  treebank_llct: "UD_Latin-LLCT"
+  treebank_udan: "UD_Latin-UDante"
+
+spacy_version: ">=3.4.2,<3.5.0"
+
+check_requirements: true
+
+# These are the directories that the project needs. The project CLI will make
+# sure that they always exist.
+directories: ["assets", "corpus", "training", "configs", "metrics", "packages"]
+
+assets:
+  - dest: "assets/treebanks/${vars.treebank_pers}"
+    git:
+      repo: "https://github.com/UniversalDependencies/${vars.treebank_pers}"
+      branch: "master"
+      path: ""
+  - dest: "assets/treebanks/${vars.treebank_proi}"
+    git:
+      repo: "https://github.com/UniversalDependencies/${vars.treebank_proi}"
+      branch: "master"
+      path: ""
+  - dest: "assets/treebanks/${vars.treebank_ittb}"
+    git:
+      repo: "https://github.com/UniversalDependencies/${vars.treebank_ittb}"
+      branch: "master"
+      path: ""
+  - dest: "assets/treebanks/${vars.treebank_llct}"
+    git:
+      repo: "https://github.com/UniversalDependencies/${vars.treebank_llct}"
+      branch: "master"
+      path: ""
+  - dest: "assets/treebanks/${vars.treebank_udan}"
+    git:
+      repo: "https://github.com/UniversalDependencies/${vars.treebank_udan}"
+      branch: "master"
+      path: ""
+
+workflows:
+  all:
+    - assets
+    - preprocess
+    - train
+    - evaluate
+    - package
+    - document
+    - clean
+
+commands:
+  - name: assets
+    help: "Download assets"
+    script:
+      - mkdir -p assets/treebanks
+      - python -m spacy project assets
+
+  - name: preprocess
+    help: "Convert the data to spaCy's format"
+    script:
+      - python scripts/get_ud_sents.py
+      - python scripts/prep-la_senter-training.py      
+
+  - name: train
+    help: "Train ${vars.package_name}"
+    script:
+      - >-
+        python -m spacy train 
+        configs/${vars.config}.cfg
+        --output ./training
+    deps:
+      - "./corpus/ud-test.spacy"
+      - "./corpus/ud-dev.spacy"
+      - "configs/${vars.config}.cfg"
+    outputs:
+      - "training/model-best"
+
+  - name: evaluate
+    help: "Evaluate on the test data and save the metrics"
+    script:
+      - >-
+        python -m spacy evaluate 
+        ./training/model-best 
+        ./corpus/ud-test.spacy 
+        --output ./metrics/${vars.package_name}.json 
+        --gpu-id ${vars.gpu}
+    deps:
+      - "training/model-best"
+      - "./corpus/ud-test.spacy"
+    outputs:
+      - "./metrics/${vars.package_name}.json"
+
+  - name: package
+    help: "Package the trained model so it can be installed"
+    script:
+      - >-
+        python -m spacy package 
+        training/model-best packages 
+        --name ${vars.package_name} 
+        --version ${vars.package_version}  
+        --meta data/meta.json
+        --force
+    deps:
+      - "training/model-best"
+    outputs_no_cache:
+      - "packages/${vars.lang}_${vars.package_name}-${vars.package_version}/dist/en_${vars.package_name}-${vars.package_version}.tar.gz"
+
+  - name: document
+    help: "Document ${vars.package_name}"
+    script:
+      - >-
+        python -m spacy project document 
+        --output README.md
+    outputs:
+      - "README.md"
+
+  - name: clean
+    help: "Remove intermediate files"
+    script:
+      - sh -c "rm -rf corpus/*"
