@@ -4,14 +4,14 @@ train:
     - python -m spacy train  configs/config.cfg --output ./training
   deps:
     - path: ./corpus/ud-test.spacy
-      md5: 97d98f40c1c23b202d0d6bb8389fe966
+      md5: c794ebd58e08c69852a4e86302c42b15
     - path: ./corpus/ud-dev.spacy
-      md5: b9da2eca60d93f659c379cce400a9d6a
+      md5: 4c0e2560e85fe8223c8060a6b7cc3ac0
     - path: configs/config.cfg
       md5: 65e7a6252f700354e5c1b32f817be6e7
   outs:
     - path: training/model-best
-      md5: 06baee3cf839ab1d19cf7b5c69e32de1
+      md5: 7d4422ea399d2f46c75aa7d4818e7983
   spacy_version: 3.4.2
   spacy_git_version: 3d0e89536
 evaluate:
@@ -21,12 +21,12 @@ evaluate:
       ./metrics/senter.json  --gpu-id -1
   deps:
     - path: training/model-best
-      md5: 06baee3cf839ab1d19cf7b5c69e32de1
+      md5: 7d4422ea399d2f46c75aa7d4818e7983
     - path: ./corpus/ud-test.spacy
-      md5: 97d98f40c1c23b202d0d6bb8389fe966
+      md5: c794ebd58e08c69852a4e86302c42b15
   outs:
     - path: ./metrics/senter.json
-      md5: d315792d26d2889f14a0da043f66787b
+      md5: c910209608484979a1871aec3e4a2d2f
   spacy_version: 3.4.2
   spacy_git_version: 3d0e89536
 package:
@@ -36,7 +36,7 @@ package:
       0.1.0   --meta data/meta.json --force
   deps:
     - path: training/model-best
-      md5: 06baee3cf839ab1d19cf7b5c69e32de1
+      md5: 7d4422ea399d2f46c75aa7d4818e7983
   outs:
     - path: packages/la_senter-0.1.0/dist/en_senter-0.1.0.tar.gz
       md5: null
@@ -49,13 +49,16 @@ document:
   deps: []
   outs:
     - path: README.md
-      md5: fded1e9ac8e7313c75828c801b24ac22
+      md5: fa1d99a075f543b098912932b7d8a72d
   spacy_version: 3.4.2
   spacy_git_version: 3d0e89536
 clean:
   cmd: python -m spacy run clean
   script:
+    - sh -c "rm -rf assets/*"
     - sh -c "rm -rf corpus/*"
+    - sh -c "rm -rf metrics/*"
+    - sh -c "rm -rf training/*"
   deps: []
   outs: []
   spacy_version: 3.4.2

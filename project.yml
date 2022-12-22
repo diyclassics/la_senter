@@ -129,4 +129,8 @@ commands:
   - name: clean
     help: "Remove intermediate files"
     script:
+      - sh -c "rm -rf assets/*"
       - sh -c "rm -rf corpus/*"
+      - sh -c "rm -rf metrics/*"
+      - sh -c "rm -rf training/*"
+

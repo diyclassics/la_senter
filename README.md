@@ -19,6 +19,7 @@ Commands are only re-run if their inputs have changed.
 
 | Command | Description |
 | --- | --- |
+| `assets` | Download assets |
 | `preprocess` | Convert the data to spaCy's format |
 | `train` | Train senter |
 | `evaluate` | Evaluate on the test data and save the metrics |
@@ -35,7 +36,7 @@ inputs have changed.
 
 | Workflow | Steps |
 | --- | --- |
-| `all` | `preprocess` &rarr; `train` &rarr; `evaluate` &rarr; `package` &rarr; `document` &rarr; `clean` |
+| `all` | `assets` &rarr; `preprocess` &rarr; `train` &rarr; `evaluate` &rarr; `package` &rarr; `document` &rarr; `clean` |
 
 ### 🗂 Assets
 
