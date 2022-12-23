@@ -54,6 +54,11 @@ in the project directory.
 
 <!-- SPACY PROJECT: AUTO-GENERATED DOCS END (do not remove) -->
 
+## Install
+
+- To install the current version...
+    - `pip install https://huggingface.co/diyclassics/la_senter/resolve/main/la_senter-0.1.0/dist/la_senter-0.1.0.tar.gz`
+
 ## Current version
 
 | Feature | Description |
