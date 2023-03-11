@@ -7,7 +7,7 @@ vars:
   config: "config"
   lang: "la"
   package_name: "senter"
-  package_version: "0.1.0"
+  package_version: "0.3.0"
   gpu: -1
   treebank_pers: "UD_Latin-Perseus"
   treebank_proi: "UD_Latin-PROIEL"
@@ -15,13 +15,13 @@ vars:
   treebank_llct: "UD_Latin-LLCT"
   treebank_udan: "UD_Latin-UDante"
 
-spacy_version: ">=3.4.2,<3.5.0"
+spacy_version: ">=3.4.2,<3.6.0"
 
 check_requirements: true
 
 # These are the directories that the project needs. The project CLI will make
 # sure that they always exist.
-directories: ["assets", "corpus", "training", "configs", "metrics", "packages"]
+directories: ["assets", "corpus", "training", "configs", "metrics", "packages", "vectors"]
 
 assets:
   - dest: "assets/treebanks/${vars.treebank_pers}"
@@ -54,6 +54,7 @@ workflows:
   all:
     - assets
     - preprocess
+    - load-vectors
     - train
     - evaluate
     - package
@@ -73,6 +74,16 @@ commands:
       - python scripts/get_ud_sents.py
       - python scripts/prep-la_senter-training.py      
 
+  - name: load-vectors
+    help: "load floret vectors"
+    script: 
+      - >-
+        python -m spacy init vectors la
+        'vectors/la.floret'
+        vectors/floret-la
+        --mode floret
+        --name ${vars.lang}_${vars.package_name}.vectors   
+
   - name: train
     help: "Train ${vars.package_name}"
     script:
@@ -80,6 +91,7 @@ commands:
         python -m spacy train 
         configs/${vars.config}.cfg
         --output ./training
+        --paths.vectors vectors/floret-la
     deps:
       - "./corpus/ud-test.spacy"
       - "./corpus/ud-dev.spacy"
@@ -133,4 +145,4 @@ commands:
       - sh -c "rm -rf corpus/*"
       - sh -c "rm -rf metrics/*"
       - sh -c "rm -rf training/*"
-
+      - sh -c "rm -rf vectors/floret-la"

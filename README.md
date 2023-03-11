@@ -21,6 +21,7 @@ Commands are only re-run if their inputs have changed.
 | --- | --- |
 | `assets` | Download assets |
 | `preprocess` | Convert the data to spaCy's format |
+| `load-vectors` | load floret vectors |
 | `train` | Train senter |
 | `evaluate` | Evaluate on the test data and save the metrics |
 | `package` | Package the trained model so it can be installed |
@@ -36,7 +37,7 @@ inputs have changed.
 
 | Workflow | Steps |
 | --- | --- |
-| `all` | `assets` &rarr; `preprocess` &rarr; `train` &rarr; `evaluate` &rarr; `package` &rarr; `document` &rarr; `clean` |
+| `all` | `assets` &rarr; `preprocess` &rarr; `load-vectors` &rarr; `train` &rarr; `evaluate` &rarr; `package` &rarr; `document` &rarr; `clean` |
 
 ### 🗂 Assets
 
@@ -57,18 +58,18 @@ in the project directory.
 ## Install
 
 - To install the current version...
-    - `pip install https://huggingface.co/diyclassics/la_senter/resolve/main/la_senter-0.1.0/dist/la_senter-0.1.0.tar.gz`
+    - `pip install https://huggingface.co/diyclassics/la_senter/resolve/main/la_senter-0.3.0/dist/la_senter-0.3.0.tar.gz`
 
 ## Current version
 
 | Feature | Description |
 | --- | --- |
 | **Name** | `la_senter` |
-| **Version** | `0.1.0` |
-| **spaCy** | `>=3.4.2,<3.5.0` |
+| **Version** | `0.3.0` |
+| **spaCy** | `>=3.4.2,<3.6.0` |
 | **Default Pipeline** | `senter` |
 | **Components** | `senter` |
-| **Vectors** | 0 keys, 0 unique vectors (0 dimensions) |
+| **Vectors** | -1 keys, 50000 unique vectors (300 dimensions) |
 | **Sources** | UD_Latin-Perseus<br />UD_Latin-PROIEL<br />UD_Latin-ITTB<br />UD_Latin-LLCT<br />UD_Latin-UDante |
 | **License** | `MIT` |
 | **Author** | [Patrick J. Burns](https://diyclassics.github.io/) |
@@ -78,6 +79,6 @@ in the project directory.
 | Type | Score |
 | --- | --- |
 | `SENTS_F` | 99.55 |
-| `SENTS_P` | 99.43 |
-| `SENTS_R` | 99.67 |
-| `SENTER_LOSS` | 5172.72 |
+| `SENTS_P` | 99.45 |
+| `SENTS_R` | 99.65 |
+| `SENTER_LOSS` | 4029.93 |
